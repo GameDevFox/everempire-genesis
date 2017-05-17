@@ -1,0 +1,15 @@
+{
+  "parser": "babel-eslint",
+  "rules": {
+    "curly": "off",
+    "keyword-spacing": ["error", {
+      "overrides": {
+        "for": { "after": false },
+        "if": { "after": false },
+        "switch": { "after": false },
+        "while": { "after": false }
+      }
+    }],
+    "space-before-function-paren": ["error", "never"]
+  }
+}

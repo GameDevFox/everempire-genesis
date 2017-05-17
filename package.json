@@ -1,0 +1,17 @@
+{
+  "name": "everempire-genesis",
+  "version": "1.0.0",
+  "author": "Edward Nicholes",
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.0.0",
+    "body-parser": "^1.17.1",
+    "eslint": "^3.19.0",
+    "eslint-loader": "^1.7.1",
+    "express": "^4.15.2",
+    "lodash": "^4.17.4",
+    "webpack": "^2.5.1",
+    "ws": "^2.3.1"
+  }
+}
