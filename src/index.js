@@ -28,9 +28,21 @@ server.on('connection', ws => {
         console.log(`Command: ${cmd}`);
         console.log(args);
 
+        let data;
         switch(cmd) {
+            case 'player_update':
+                // Update data
+                data = ws.data;
+                _.assign(data, args);
+
+                // Annotate args
+                args.uid = data.uid;
+
+                const uid = ws.data.uid;
+                sendJsonToAll({ cmd: "player_update", args }, uid);
+                break;
             case 'set':
-                let data = ws.data;
+                data = ws.data;
                 _.assign(data, args);
 
                 sendJsonToAll(data);
@@ -48,9 +60,15 @@ server.on('connection', ws => {
 });
 console.log(`Genesis now listening on port ${port}`);
 
-function sendJsonToAll(data) {
+function sendJsonToAll(data, exclude) {
+    exclude = _.isArray(exclude) ? exclude : [exclude];
+
     const json = JSON.stringify(data);
     _.values(sockets).map(socket => {
+        const uid = socket.data.uid;
+        if(exclude.includes(uid))
+            return;
+
         socket.send(json);
     });
 }
