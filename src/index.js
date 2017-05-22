@@ -31,15 +31,12 @@ server.on('connection', ws => {
         let data;
         switch(cmd) {
             case 'player_update':
-                // Update data
-                data = ws.data;
-                _.assign(data, args);
-
-                // Annotate args
-                args.uid = data.uid;
+                // Update player data and send to others
+                const vectorPath = args;
+                ws.data.vectorPath = vectorPath;
 
                 const uid = ws.data.uid;
-                sendJsonToAll({ cmd: "player_update", args }, uid);
+                sendJsonToAll({cmd: "player_update", args: {uid, vectorPath}}, uid);
                 break;
             case 'set':
                 data = ws.data;
