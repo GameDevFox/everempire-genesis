@@ -1,6 +1,7 @@
+import {install} from 'source-map-support';
+install();
+
 import _ from 'lodash';
-import bodyParser from 'body-parser';
-import express from 'express';
 import WebSocket from 'ws';
 
 // Config
@@ -10,52 +11,91 @@ const port = process.env['GENESIS_PORT'] || 1127;
 let uidCounter = 0;
 const sockets = {};
 
+const commands = {};
+
+commands['pong'] = () => {};
+
+commands['player_update'] = (ws, vectorPath) => {
+    // Update player data and send to others
+    ws.data.vectorPath = vectorPath;
+
+    const uid = ws.data.uid;
+    sendJsonToAll({cmd: "player_update", args: {uid, vectorPath}}, uid);
+};
+
+commands['set'] = (ws, args) => {
+    const {data} = ws;
+    _.assign(data, args);
+
+    sendJsonToAll(data);
+};
+
 const server = new WebSocket.Server({port});
 server.on('connection', ws => {
     console.log('Client connected.');
 
     const uid = ++uidCounter;
-    ws.data = {uid};
+    ws.data = {
+        uid,
+        ping: -1
+    };
     sockets[uid] = ws;
 
     // Send existng data
     const allUserData = _.values(sockets).map(socket => socket.data);
     sendJsonToAll(allUserData);
 
+    ws.pingInterval = setInterval(() => ping(ws), 1000);
+
     ws.on('message', msg => {
+        // This is to filter out PONG messages
+        if(msg[0] !== '{')
+            return;
+
         const {cmd, args} = JSON.parse(msg);
 
-        console.log(`Command: ${cmd}`);
-        console.log(args);
-
-        let data;
-        switch(cmd) {
-            case 'player_update':
-                // Update player data and send to others
-                const vectorPath = args;
-                ws.data.vectorPath = vectorPath;
-
-                const uid = ws.data.uid;
-                sendJsonToAll({cmd: "player_update", args: {uid, vectorPath}}, uid);
-                break;
-            case 'set':
-                data = ws.data;
-                _.assign(data, args);
-
-                sendJsonToAll(data);
-                break;
-            default:
-                console.log(`Command "${cmd}" has no handler`);
-                break;
+        const command = commands[cmd];
+        if(!command) {
+            console.log(`Command "${cmd}" has no handler`);
+            return;
         }
+
+        command(ws, args);
     });
 
     ws.on('close', () => {
+        clearInterval(ws.pingInterval);
+
         delete sockets[ws.data.uid];
         console.log('Client disconnected.');
     });
 });
 console.log(`Genesis now listening on port ${port}`);
+
+function ping(ws) {
+    let start, stop;
+    const pongListener = msg => {
+        stop = Date.now();
+        const {cmd} = JSON.parse(msg);
+
+        if(cmd !== 'pong')
+            return;
+
+        ws.removeListener('message', pongListener);
+
+        const pingTime = stop - start;
+        ws.data.ping = pingTime;
+    };
+
+    ws.on('message', pongListener);
+    start = Date.now();
+
+    const pingData = JSON.stringify({
+      cmd: 'ping',
+      args: ws.data.ping
+    });
+    ws.send(pingData);
+}
 
 function sendJsonToAll(data, exclude) {
     exclude = _.isArray(exclude) ? exclude : [exclude];
@@ -69,23 +109,3 @@ function sendJsonToAll(data, exclude) {
         socket.send(json);
     });
 }
-
-// HTTP
-const app = express();
-
-app.use(bodyParser.json());
-
-app.get('/test', (req, res) => {
-    res.json({ test: 'This is a test' });
-});
-
-app.post('/post-test', (req, res) => {
-    let result = { postTest: 'This is a POST test', body: req.body};
-    console.log(JSON.stringify(result, null, 2));
-    res.json(result);
-});
-
-const httpPort = port + 1;
-app.listen(httpPort, () => {
-    console.log(`Genesis-API now listening on port ${httpPort}`);
-});
