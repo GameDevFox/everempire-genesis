@@ -30,15 +30,17 @@ commands['set'] = (ws, args) => {
     sendJsonToAll(data);
 };
 
+commands['sync'] = (ws, args) => {
+    const serverTime = Date.now() + 15000;
+    sendCmd(ws, 'sync', { clientTime: args, serverTime});
+};
+
 const server = new WebSocket.Server({port});
 server.on('connection', ws => {
     console.log('Client connected.');
 
     const uid = ++uidCounter;
-    ws.data = {
-        uid,
-        ping: -1
-    };
+    ws.data = {uid, ping: -1};
     sockets[uid] = ws;
 
     // Send existng data
@@ -48,10 +50,6 @@ server.on('connection', ws => {
     ws.pingInterval = setInterval(() => ping(ws), 1000);
 
     ws.on('message', msg => {
-        // This is to filter out PONG messages
-        if(msg[0] !== '{')
-            return;
-
         const {cmd, args} = JSON.parse(msg);
 
         const command = commands[cmd];
@@ -90,16 +88,28 @@ function ping(ws) {
     ws.on('message', pongListener);
     start = Date.now();
 
-    const pingData = JSON.stringify({
-      cmd: 'ping',
-      args: ws.data.ping
-    });
-    ws.send(pingData);
+    sendCmd(ws, 'ping', ws.data.ping);
+}
+
+function send(ws, data) {
+    let msg;
+    try {
+        msg = JSON.stringify(data);
+    } catch (e) {
+        console.error(e, data);
+    }
+    ws.send(msg);
+}
+
+function sendCmd(ws, cmd, args) {
+    const data = {cmd, args};
+    send(ws, data);
 }
 
 function sendJsonToAll(data, exclude) {
     exclude = _.isArray(exclude) ? exclude : [exclude];
 
+    // We do this instead of send() for efficiency
     const json = JSON.stringify(data);
     _.values(sockets).map(socket => {
         const uid = socket.data.uid;
