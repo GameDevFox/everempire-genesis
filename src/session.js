@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 import Commands from './common/commands';
 import TimeSync from './common/time-sync';
 
-import {randomHex} from './util';
+import randomHex from './util/random-hex';
 
 export default class Session extends EventEmitter {
     constructor(ws) {

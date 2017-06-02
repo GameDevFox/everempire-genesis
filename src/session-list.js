@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 export default class SesssionList {
     constructor() {
+        this.commands = {};
         this.sessionIdCounter = 0;
         this.sessions = {};
     }

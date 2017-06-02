@@ -1,0 +1,5 @@
+--include should
+--include source-map-support/register
+--recursive
+--webpack-config webpack.config.js
+src/**/*.spec.js

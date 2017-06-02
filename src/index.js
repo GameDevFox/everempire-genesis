@@ -1,30 +1,33 @@
-import {install} from 'source-map-support';
-install();
+import 'source-map-support/register';
 
 import WebSocket from 'ws';
 
+import Commands from './common/commands';
 import Session from './session';
 import SessionList from './session-list';
 
-import GenesisCommands from './common/commands';
-import buildCommands from './commands';
+import ping from './commands/ping';
+import buildPlayerUpdate from './commands/player-update';
 
 // Config
 const port = process.env['GENESIS_PORT'] || 1127;
 
 const sessionList = new SessionList();
-const commands = buildCommands(sessionList);
 
-// TODO; Fix this circular dependency
-sessionList.commands = commands;
+// Build and add commands to session list
+const {commands} = sessionList;
 
-// WEB SOCKETS
+const playerUpdate = buildPlayerUpdate(sessionList);
+commands[Commands.PING] = ping;
+commands[Commands.PLAYER_UPDATE] = playerUpdate;
+
+// Setup WebSocket server
 const server = new WebSocket.Server({port});
 server.on('connection', ws => {
     console.log('Client connected.');
 
     const session = new Session(ws);
-    session.on(GenesisCommands.AUTH, () => {
+    session.on(Commands.AUTH, () => {
         sessionList.add(session);
     });
 });
