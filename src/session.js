@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 
 import Commands from './common/commands';
+import Events from './events';
 import TimeSync from './common/time-sync';
 
 import randomHex from './util/random-hex';
@@ -8,15 +9,14 @@ import randomHex from './util/random-hex';
 export default class Session extends EventEmitter {
     constructor(ws) {
         super();
-
         this.ws = ws;
 
         this.timeSync = new TimeSync();
         this.data = {};
 
-        ws.on('message', msg => {
+        ws.on(Events.MESSAGE, msg => {
             const {cmd, args} = JSON.parse(msg);
-            this.emit('command', cmd, args);
+            this.emit(Events.COMMAND, cmd, args);
             this.emit(cmd, args);
         });
     }

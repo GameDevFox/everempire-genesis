@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+import Events from './events';
+
 export default class SesssionList {
     constructor() {
         this.commands = {};
@@ -12,7 +14,7 @@ export default class SesssionList {
         session.sid = sid;
         session.conected = true;
 
-        session.on('command', (cmd, args) => {
+        session.on(Events.COMMAND, (cmd, args) => {
             const command = this.commands[cmd];
 
             if(!command) {
