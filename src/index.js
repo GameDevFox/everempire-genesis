@@ -10,8 +10,7 @@ import SessionList from './session-list';
 import ping from './commands/ping';
 import buildPlayerUpdate from './commands/player-update';
 
-// Config
-const port = process.env['GENESIS_PORT'] || 1127;
+import serverConfig from './config';
 
 const sessionList = new SessionList();
 
@@ -30,11 +29,11 @@ unauthGroup.on(Commands.AUTH, function() {
 });
 
 // Setup WebSocket server
-const server = new WebSocket.Server({port});
+const server = new WebSocket.Server(serverConfig);
 server.on('connection', ws => {
     console.log('Client connected.');
 
     const session = new Session(ws);
     unauthGroup.add(session);
 });
-console.log(`Genesis now listening on port ${port}`);
+console.log(`Genesis now listening for connections`);
