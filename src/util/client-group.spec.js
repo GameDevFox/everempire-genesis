@@ -3,24 +3,24 @@ import should from 'should';
 import EventEmitter from 'events';
 import sinon, {assert} from 'sinon';
 
-import EventGroup from './event-group'
+import ClientGroup from './client-group'
 
 const EVENT_A = 'event_a';
 const EVENT_B = 'event_b';
 
-describe('EventGroup', () => {
+describe('ClientGroup', () => {
     it('should work', () => {
         // Setup
-        const eventGroup = new EventGroup();
+        const clientGroup = new ClientGroup();
 
         const spyA = sinon.spy();
-        eventGroup.on(EVENT_A, spyA);
+        clientGroup.on(EVENT_A, spyA);
 
         const symbolA = new EventEmitter();
 
         // Test
         const arg = 'arg';
-        eventGroup.add(symbolA);
+        clientGroup.add(symbolA);
         symbolA.emit(EVENT_A, arg);
 
         // Assert
@@ -29,10 +29,10 @@ describe('EventGroup', () => {
 
         // Test
         const spyB = sinon.spy();
-        eventGroup.on(EVENT_B, spyB);
+        clientGroup.on(EVENT_B, spyB);
 
         const symbolB = new EventEmitter();
-        eventGroup.add(symbolB);
+        clientGroup.add(symbolB);
 
         const moreArgs = ['more', 'args'];
         symbolA.emit(EVENT_B, moreArgs);
@@ -45,7 +45,7 @@ describe('EventGroup', () => {
         assert.calledWith(spyB.getCall(0), moreArgs);
 
         // Test
-        eventGroup.remove(symbolA);
+        clientGroup.remove(symbolA);
 
         const lastArgs = {last: 'one'};
         symbolA.emit(EVENT_B, lastArgs);

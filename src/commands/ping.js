@@ -1,24 +1,19 @@
-import Commands from '../common/commands';
+export default function(client, data) {
+  // Send Pong
+  client.pong();
 
-export default function(session, args) {
-    const laterLocalTime = Date.now();
+  // Validate id
+  const { lastPing } = client;
+  const [id, localTime] = lastPing;
+  const [receivedId, clientTime] = data;
 
-    // Send Pong
-    session.sendCmd(Commands.PONG, [session.lastPing[0], laterLocalTime]);
+  // Ignore is ids don't match
+  if(id !== receivedId) {
+    console.warn(`Ping ids did not match, ignoring: ${id} ${receivedId}`);
+    return;
+  }
 
-    // Validate id
-    const {lastPing} = session;
-    const [id, localTime] = lastPing;
-    const [receivedId, clientTime] = args;
-
-    if(id !== receivedId) {
-        console.warn(`Ping ids did not match, ignoring: ${id} ${receivedId}`);
-        return;
-    }
-
-    // Calculate Ping
-    session.ping = laterLocalTime - localTime;
-
-    // Calculate Sync
-    session.timeSync.update(localTime, clientTime, laterLocalTime);
+  // Calculate Ping & Sync
+  client.pingTime = client.laterLocalTime - localTime;
+  client.timeSync.update(localTime, clientTime, client.laterLocalTime);
 }

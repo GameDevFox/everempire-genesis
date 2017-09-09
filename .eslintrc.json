@@ -1,6 +1,12 @@
 {
+  "root": true,
+  "env": {
+    "node": true
+  },
+  "extends": "xo-space/esnext",
   "parser": "babel-eslint",
   "rules": {
+    "capitalized-comments": "off",
     "curly": "off",
     "keyword-spacing": ["error", {
       "overrides": {
@@ -10,6 +16,8 @@
         "while": { "after": false }
       }
     }],
+    "new-cap": "off",
+    "object-curly-spacing": ["error", "always"],
     "space-before-function-paren": ["error", "never"]
   }
 }

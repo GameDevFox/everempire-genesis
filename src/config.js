@@ -3,26 +3,33 @@ const fs = require('fs');
 
 const env = process.env;
 
-const port = env['GENESIS_PORT'] || 1127;
-const certFile = env['GENESIS_CERT_FILE'];
-const keyFile = env['GENESIS_KEY_FILE'];
+const empireServiceUrl = env.GENESIS_EMPIRE_SERVICE_URL;
+const empireServiceToken = env.GENESIS_EMPIRE_SERVICE_TOKEN;
+
+const port = env.GENESIS_PORT || 1127;
+const certFile = env.GENESIS_CERT_FILE;
+const keyFile = env.GENESIS_KEY_FILE;
 
 console.log(`Genesis Port: ${port}`);
 
-let serverConfig = {};
+const serverConfig = {};
 
 if(certFile && keyFile) {
-    console.log('Building WebSocket Server with SSL');
+  console.log('Building WebSocket Server with SSL');
 
-    const server = https.createServer({
-        cert: fs.readFileSync(certFile),
-        key: fs.readFileSync(keyFile)
-    });
-    server.listen(port);
+  const server = https.createServer({
+    cert: fs.readFileSync(certFile),
+    key: fs.readFileSync(keyFile)
+  });
+  server.listen(port);
 
-    serverConfig.server = server;
+  serverConfig.server = server;
 } else {
-    serverConfig.port = port;
+  serverConfig.port = port;
 }
 
-export default serverConfig;
+export {
+  empireServiceToken,
+  empireServiceUrl,
+  serverConfig
+};
