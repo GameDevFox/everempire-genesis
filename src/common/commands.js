@@ -1,7 +1,7 @@
 const Commands = {
   AUTH: 'auth',
   CHAT: 'chat',
-  PLAYER_UPDATE: 'player_update',
+  PLAYER_UPDATE: 'playerUpdate',
   PING: 'ping',
   PONG: 'pong'
 };
