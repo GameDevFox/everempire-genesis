@@ -1,25 +1,25 @@
-import EventEmitter from 'events';
-
 import Events from '../common/events';
 
-export default class ServerSocket extends EventEmitter {
-  constructor(ws) {
-    super();
-    this.ws = ws;
+export default function ServerSocket(ws) {
+  const sendToSocket = msg => {
+    const msgStr = JSON.stringify(msg);
+    ws.send(msgStr);
+  };
 
-    this.ws.on('message', msg => this.onMessage(msg));
-    this.ws.on('close', e => this.onClose(e));
-  }
+  const sendToChannel = channel => {
+    const onMessage = msgStr => {
+      const msg = JSON.parse(msgStr);
+      channel.onMessage(msg);
+    };
 
-  send(msg) {
-    this.ws.send(msg);
-  }
+    const onClose = () => channel.emit(Events.CLOSE);
 
-  onMessage(msg) {
-    this.emit(Events.MESSAGE, msg);
-  }
+    ws.on(Events.MESSAGE, onMessage);
+    ws.on(Events.CLOSE, onClose);
+  };
 
-  onClose(e) {
-    this.emit(Events.CLOSE, e);
-  }
+  return {
+    sendToSocket,
+    sendToChannel
+  };
 }

@@ -1,26 +1,31 @@
 import EventEmitter from 'events';
 
 import Commands from './common/commands';
+import Events from './common/events';
 import TimeSync from './common/time-sync';
 import randomHex from './util/random-hex';
 
 export default class Client extends EventEmitter {
-  constructor(session) {
+  constructor(channel) {
     super();
-    this.session = session;
+    this.channel = channel;
     this.data = {};
 
+    this.commands = channel.commands;
     this.timeSync = new TimeSync();
-    this.commands = session.commands;
+
+    // Initialize ping
+    const pingInterval = setInterval(() => this.ping(), 1000);
+    this.channel.on(Events.CLOSE, () => clearInterval(pingInterval));
   }
 
   ping() {
     this.lastPing = [randomHex(), Date.now()];
-    this.session.command(Commands.PING, this.lastPing);
+    this.channel.command(Commands.PING, this.lastPing);
   }
 
   pong() {
     this.laterLocalTime = Date.now();
-    this.session.command(Commands.PONG, [this.lastPing[0], this.laterLocalTime]);
+    this.channel.command(Commands.PONG, [this.lastPing[0], this.laterLocalTime]);
   }
 }

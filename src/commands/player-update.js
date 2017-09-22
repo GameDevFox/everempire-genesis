@@ -5,7 +5,7 @@ export default function build(clientList) {
     // Update player data and sendToAll to others
     client.data.vectorPath = vectorPath;
 
-    const { cid } = client;
-    clientList.commandAll(Commands.PLAYER_UPDATE, { cid, vectorPath }, cid);
+    const { userId } = client;
+    clientList.commandAll(Commands.PLAYER_UPDATE, { userId, vectorPath }, userId);
   };
 }

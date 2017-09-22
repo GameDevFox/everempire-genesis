@@ -5,14 +5,12 @@ import WebSocket from 'ws';
 import ping from './commands/ping';
 import buildPlayerUpdate from './commands/player-update';
 
+import Channel from './common/channel';
 import Commands from './common/commands';
 import EmpireService from './common/empire-service';
-import Session from './common/session';
 
 import ServerRestClient from './server/server-rest-client';
 import ServerSocket from './server/server-socket';
-
-// import ClientGroup from './util/client-group';
 
 import Client from './client';
 import ClientList from './client-list';
@@ -31,15 +29,7 @@ commands[Commands.PLAYER_UPDATE] = playerUpdate;
 const restService = ServerRestClient(empireServiceUrl, empireServiceToken);
 const empireService = EmpireService(restService);
 
-// Setup WebSocket server
-const server = new WebSocket.Server(serverConfig);
-server.on('connection', ws => {
-  console.log('Client connected.');
-
-  const socket = new ServerSocket(ws);
-  const session = new Session(socket);
-  const client = new Client(session);
-
+const AuthHandler = client => {
   const onAuth = msg => {
     console.log('Trying to authenticate');
 
@@ -57,7 +47,23 @@ server.on('connection', ws => {
       msg.respond({ data: userId });
     });
   };
-  client.commands.on(Commands.AUTH, onAuth);
+
+  return onAuth;
+};
+
+// Setup WebSocket server
+const server = new WebSocket.Server(serverConfig);
+server.on('connection', ws => {
+  console.log('Client connected.');
+
+  const { sendToSocket, sendToChannel } = new ServerSocket(ws);
+  const channel = new Channel(sendToSocket);
+  sendToChannel(channel);
+
+  const client = new Client(channel);
+
+  const authHandler = AuthHandler(client);
+  client.commands.on(Commands.AUTH, authHandler);
 
   // unauthGroup.add(client);
 });
