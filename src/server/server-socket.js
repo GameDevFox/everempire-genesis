@@ -20,6 +20,6 @@ export default function ServerSocket(ws) {
 
   return {
     sendToSocket,
-    sendToChannel
+    sendToChannel,
   };
 }

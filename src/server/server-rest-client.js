@@ -21,6 +21,6 @@ export default function ServerRestClient(serviceUrl, apiToken) {
 
   return {
     call,
-    url
+    url,
   };
 }

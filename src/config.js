@@ -1,7 +1,7 @@
 const https = require('https');
 const fs = require('fs');
 
-const env = process.env;
+const { env } = process;
 
 const empireServiceUrl = env.GENESIS_EMPIRE_SERVICE_URL;
 const empireServiceToken = env.GENESIS_EMPIRE_SERVICE_TOKEN;
@@ -19,17 +19,16 @@ if(certFile && keyFile) {
 
   const server = https.createServer({
     cert: fs.readFileSync(certFile),
-    key: fs.readFileSync(keyFile)
+    key: fs.readFileSync(keyFile),
   });
   server.listen(port);
 
   serverConfig.server = server;
-} else {
+} else
   serverConfig.port = port;
-}
 
 export {
   empireServiceToken,
   empireServiceUrl,
-  serverConfig
+  serverConfig,
 };

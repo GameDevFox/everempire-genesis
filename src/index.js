@@ -68,4 +68,4 @@ server.on('connection', ws => {
   // unauthGroup.add(client);
 });
 
-console.log(`Genesis now listening for connections`);
+console.log('Genesis now listening for connections');

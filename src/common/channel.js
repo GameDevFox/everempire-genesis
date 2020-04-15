@@ -123,9 +123,8 @@ export default function Channel(sendFn, channelOptions = {}) {
 
     // Handle a response
     const { responseId } = msg;
-    if(responseId) {
+    if(responseId)
       requestHooks[responseId].resolve(msg);
-    }
 
     // Handle a channel
     // ... remote source
@@ -195,6 +194,6 @@ export default function Channel(sendFn, channelOptions = {}) {
     commands,
     onMessage,
     send,
-    view
+    view,
   });
 }

@@ -1,18 +1,18 @@
 import sinon from 'sinon';
 
-import buildPlayerUpdate from './player-update'
+import buildPlayerUpdate from './player-update';
 
 describe('playerUpdate(session, vectorPath)', () => {
   let playerUpdate;
   before(() => {
     const clientList = {
-      commandAll: sinon.spy()
+      commandAll: sinon.spy(),
     };
     playerUpdate = buildPlayerUpdate(clientList);
   });
 
   it('should work', () => {
-    const session = {data: {}};
-    playerUpdate(session, {})
+    const session = { data: {} };
+    playerUpdate(session, {});
   });
 });

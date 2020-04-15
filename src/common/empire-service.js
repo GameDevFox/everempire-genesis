@@ -12,7 +12,7 @@ export default function EmpireService(restService) {
     deleteToken: 'DELETE:/me/token',
     createWorld: 'POST:/me/world',
     destroyWorld: 'DELETE:/me/world/${id}',
-    getMyWorlds: 'GET:/me/worlds'
+    getMyWorlds: 'GET:/me/worlds',
   };
   /* eslint-enable no-template-curly-in-string */
 
@@ -20,12 +20,12 @@ export default function EmpireService(restService) {
     const [method, path] = value.split(':');
     const pathT = ArrayTemplate(path);
 
-    return function() {
-      const argCount = pathT.argCount;
-      const data = arguments[argCount];
-      const options = arguments[argCount + 1];
+    return function(...args) {
+      const { argCount } = pathT;
+      const data = args[argCount];
+      const options = args[argCount + 1];
 
-      const path = pathT(arguments);
+      const path = pathT(args);
       return restService.call(method, path, data, options);
     };
   });

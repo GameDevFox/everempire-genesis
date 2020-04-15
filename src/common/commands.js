@@ -3,7 +3,7 @@ const Commands = {
   CHAT: 'chat',
   PLAYER_UPDATE: 'playerUpdate',
   PING: 'ping',
-  PONG: 'pong'
+  PONG: 'pong',
 };
 
 export default Commands;

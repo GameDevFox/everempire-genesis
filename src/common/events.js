@@ -3,7 +3,7 @@ const Events = {
   CLOSE: 'close',
   COMMAND: 'command',
   MESSAGE: 'message',
-  VIEW: 'view'
+  VIEW: 'view',
 };
 
 export default Events;

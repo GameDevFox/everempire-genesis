@@ -17,8 +17,8 @@ describe('DeltaView', () => {
         list: [1, 2, 3],
         players: {
           1: { name: 'James', hp: 100 },
-          2: { name: 'Sarah', hp: 80 }
-        }
+          2: { name: 'Sarah', hp: 80 },
+        },
       });
 
       deltaView.data.should.eql({
@@ -27,8 +27,8 @@ describe('DeltaView', () => {
         list: [1, 2, 3],
         players: {
           1: { name: 'James', hp: 100 },
-          2: { name: 'Sarah', hp: 80 }
-        }
+          2: { name: 'Sarah', hp: 80 },
+        },
       });
 
       deltaView.enter({
@@ -38,8 +38,8 @@ describe('DeltaView', () => {
         players: {
           1: { hp: 120 },
           2: { mp: 30 },
-          3: { name: 'Alex', hp: 100 }
-        }
+          3: { name: 'Alex', hp: 100 },
+        },
       });
 
       deltaView.data.should.eql({
@@ -50,15 +50,15 @@ describe('DeltaView', () => {
         players: {
           1: { name: 'James', hp: 120 },
           2: { name: 'Sarah', hp: 80, mp: 30 },
-          3: { name: 'Alex', hp: 100 }
-        }
+          3: { name: 'Alex', hp: 100 },
+        },
       });
     });
 
     it('should fire an event', done => {
       const enterData = {
         hello: 'world',
-        gold: 123
+        gold: 123,
       };
 
       const deltaView = DeltaView();
@@ -81,8 +81,8 @@ describe('DeltaView', () => {
         players: {
           1: { name: 'James', hp: 120 },
           2: { name: 'Sarah', hp: 80, mp: 30 },
-          3: { name: 'Alex', hp: 100 }
-        }
+          3: { name: 'Alex', hp: 100 },
+        },
       });
 
       deltaView.exit([
@@ -92,17 +92,17 @@ describe('DeltaView', () => {
         {
           players: [
             1,
-            { 2: ['hp'] }
-          ]
-        }
+            { 2: ['hp'] },
+          ],
+        },
       ]);
 
       deltaView.data.should.eql({
         another: 'one',
         players: {
           2: { name: 'Sarah', mp: 30 },
-          3: { name: 'Alex', hp: 100 }
-        }
+          3: { name: 'Alex', hp: 100 },
+        },
       });
     });
 

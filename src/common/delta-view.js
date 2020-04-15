@@ -16,9 +16,8 @@ export default function DeltaView(data = {}) {
           const subData = data[key];
           removePaths(subData, subPaths);
         });
-      } else {
+      } else
         delete data[path];
-      }
     });
   };
 
@@ -30,6 +29,6 @@ export default function DeltaView(data = {}) {
   return _.merge(result, {
     data,
     enter,
-    exit
+    exit,
   });
 }

@@ -1,14 +1,14 @@
 import sinon from 'sinon';
 
-import ping from './ping'
+import ping from './ping';
 
 describe('ping(session, data)', () => {
   it('should work', () => {
     const session = {
       commandAll: sinon.spy(),
-      lastPing: []
+      lastPing: [],
     };
 
-    ping(session, [0, 0])
+    ping(session, [0, 0]);
   });
 });
