@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "author": "Edward Nicholes",
   "devDependencies": {
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.21",
     "needle": "^2.0.0",
     "source-map-support": "^0.4.15",
     "ws": "^7.2.3"
