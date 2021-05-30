@@ -6,7 +6,7 @@
     "lodash": "^4.17.4",
     "needle": "^2.0.0",
     "source-map-support": "^0.4.15",
-    "ws": "^7.2.3"
+    "ws": "^7.4.6"
   },
   "sakuradite": {
     "type": "app"
